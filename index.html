@@ -3,24 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- هذا هو السطر السحري الذي سيحل مشكلة الصورة المكسورة نهائياً -->
     <meta name="referrer" content="no-referrer">
     <style>
-        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffffff; }
-        img { max-width: 100%; max-height: 100vh; object-fit: contain; }
+        /* شاشة بيضاء تخفي كل شيء في البداية لمنع ظهور المتصفح كوسيط */
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffffff; overflow: hidden; }
+        img { max-width: 100%; max-height: 100vh; object-fit: contain; opacity: 0; transition: opacity 0.2s ease-in; }
     </style>
 </head>
 <body>
+
     <img id="myImage" src="" />
+
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const imgUrl = urlParams.get('img');
+        const imgElement = document.getElementById('myImage');
+
         if(imgUrl) {
-            document.getElementById('myImage').src = decodeURIComponent(imgUrl);
-        }
-        setTimeout(function() {
+            // جلب الرابط وفك التشفير تلقائياً
+            const decodedUrl = decodeURIComponent(imgUrl);
+            
+            // إنشاء كائن تحميل في الخلفية لضمان عدم ظهور الصورة مكسورة أو مجزأة
+            const tempImg = new Image();
+            tempImg.src = decodedUrl;
+            
+            tempImg.onload = function() {
+                // تظهر الصورة فوراً بكامل جودتها بمجرد اكتمال تحميلها في الخلفية
+                imgElement.src = decodedUrl;
+                imgElement.style.opacity = "1";
+                
+                // بدء مؤقت الـ 10 ثوانٍ بعد ظهور الصورة تماماً
+                setTimeout(function() {
+                    window.location.href = "https://absher.sa";
+                }, 10000);
+            };
+
+            // احتياطاً في حال فشل الرابط أو حظره المتصفح
+            tempImg.onerror = function() {
+                window.location.href = "https://absher.sa";
+            };
+        } else {
+            // إذا تم فتح الرابط بدون صورة يحول فوراً لأبشر
             window.location.href = "https://absher.sa";
-        }, 10000); // 10 ثوانٍ كاملة
+        }
     </script>
 </body>
 </html>
